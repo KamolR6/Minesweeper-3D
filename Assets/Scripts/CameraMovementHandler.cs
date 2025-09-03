@@ -1,21 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraMovementHandler : MonoBehaviour
 {
-    [SerializeField] GameObject PlayerProp;AssetBundleCreateRequest 
-    [SerializeField] float sensitivity;
+    [SerializeField] private Transform body;
+    [SerializeField] private Transform cameraHolder;
 
-    private Vector3 offset;
-    private Rigidbody rb;
+    public float sensitivityX = 5f;
+    public float sensitivityY = 5f;
 
-    void FixedUpdate()
+    private float xRotation = 0f;
+
+    void Update()
     {
-        float rotateHorizontal = Input.GetAxis("Mouse X");
-        float rotateVertical = Input.GetAxis("Mouse Y");
-        transform.RotateAround(PlayerProp.transform.position, -Vector3.up, rotateHorizontal * sensitivity); //use transform.Rotate(-transform.up * rotateHorizontal * sensitivity) instead if you dont want the camera to rotate around the player
-        transform.RotateAround(Vector3.zero, transform.right, rotateVertical * sensitivity); // again, use transform.Rotate(transform.right * rotateVertical * sensitivity) if you don't want the camera to rotate around the player
-    }
+        float mouseX = Input.GetAxis("Mouse X") * sensitivityX;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivityY;
 
+        // Rotate body left/right
+        body.Rotate(Vector3.up * mouseX);
+
+        // Rotate cameraHolder up/down
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -80f, 80f);
+        cameraHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+    }
 }
